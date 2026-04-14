@@ -1,11 +1,11 @@
 import * as core from '@actions/core';
 import * as handlebars from 'handlebars';
 
-import {Build} from '@docker/actions-toolkit/lib/buildx/build';
-import {Context} from '@docker/actions-toolkit/lib/context';
-import {GitHub} from '@docker/actions-toolkit/lib/github';
-import {Toolkit} from '@docker/actions-toolkit/lib/toolkit';
-import {Util} from '@docker/actions-toolkit/lib/util';
+import {Build} from '@docker/actions-toolkit/lib/buildx/build.js';
+import {Context} from '@docker/actions-toolkit/lib/context.js';
+import {GitHub} from '@docker/actions-toolkit/lib/github/github.js';
+import {Toolkit} from '@docker/actions-toolkit/lib/toolkit.js';
+import {Util} from '@docker/actions-toolkit/lib/util.js';
 
 export interface Inputs {
   'add-hosts': string[];
@@ -183,7 +183,7 @@ async function getBuildArgs(inputs: Inputs, context: string, toolkit: Toolkit): 
     }
   });
   if (inputs['github-token'] && !Build.hasGitAuthTokenSecret(inputs.secrets) && context.startsWith(Context.gitContext())) {
-    args.push('--secret', Build.resolveSecretString(`GIT_AUTH_TOKEN=${inputs['github-token']}`));
+    args.push('--secret', Build.resolveSecretString(`GIT_AUTH_TOKEN.${new URL(GitHub.serverURL).host.trimEnd()}=${inputs['github-token']}`));
   }
   if (inputs['shm-size']) {
     args.push('--shm-size', inputs['shm-size']);
